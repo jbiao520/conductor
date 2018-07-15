@@ -23,16 +23,19 @@ import com.google.common.annotations.VisibleForTesting;
 import com.netflix.conductor.core.events.queue.Message;
 import com.netflix.conductor.core.events.queue.ObservableQueue;
 import com.netflix.conductor.metrics.Monitors;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Observable.OnSubscribe;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jbiao520
@@ -47,7 +50,7 @@ public class KAFKAObservableQueue implements ObservableQueue {
 	private String queueURI;
 	private String queueName;
 
-
+	private int pollTimeInMS = 100;
 	private KafkaConsumer<String, String> consumer;
 
 	private KafkaProducer<String, String> producer;
@@ -58,6 +61,7 @@ public class KAFKAObservableQueue implements ObservableQueue {
 		this.queueURI = queueURI;
 		this.consumer = consumer;
 		this.producer = producer;
+		logger.info("KAFKAObservableQueue initialized with queueURI="+queueURI);
 	}
 
 	@Override
@@ -67,13 +71,23 @@ public class KAFKAObservableQueue implements ObservableQueue {
 	}
 	@VisibleForTesting
 	OnSubscribe<Message> getOnSubscribe() {
-		return null;
+		return subscriber -> {
+			Observable<Long> interval = Observable.interval(pollTimeInMS, TimeUnit.MILLISECONDS);
+			interval.flatMap((Long x)->{
+				List<Message> msgs = receiveMessages();
+				return Observable.from(msgs);
+			}).subscribe(subscriber::onNext, subscriber::onError);
+		};
 	}
 
 	@VisibleForTesting
 	List<Message> receiveMessages() {
 		try {
 			ConsumerRecords<String, String> records = consumer.poll(Long.MAX_VALUE);
+			TopicPartition topicPartition = new TopicPartition(queueURI,1);
+			List<ConsumerRecord<String,String>> recordList = records.records(topicPartition);
+			for (ConsumerRecord<?, ?> record : records) {
+			}
 			return null;
 		} catch (Exception e) {
 			logger.error("Exception while getting messages from SQS ", e);

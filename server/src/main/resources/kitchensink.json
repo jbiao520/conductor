@@ -24,7 +24,7 @@
         "oddEven": "${workflow.input.oddEven}"
       },
       "type": "EVENT",
-      "sink": "conductor"
+      "sink": "kafka:test"
     },
     {
       "name": "dyntask",
