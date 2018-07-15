@@ -60,6 +60,18 @@ public class End2EndTests {
 		System.setProperty("workflow.namespace.prefix", "integration-test");
 		System.setProperty("db", "memory");
 		System.setProperty("workflow.elasticsearch.version", "5");
+		System.setProperty("io.nats.client.host", "t1.devvm.com");
+		System.setProperty("io.nats.client.url", "nats://t1.devvm.com:4222");
+		System.setProperty("conductor.additional.modules", "com.netflix.conductor.contribs.NatsModule");
+		System.setProperty("conductor.additional.modules", "com.netflix.conductor.contribs.KafkaModule");
+		System.setProperty("loadSample", "true");
+		System.setProperty("kafka_bootstrap.servers", "s3.devvm.com:9092");
+		System.setProperty("kafka_group.id", "george_test");
+		System.setProperty("kafka_key.deserializer","org.apache.kafka.common.serialization.StringDeserializer");
+		System.setProperty("kafka_value.deserializer",  "org.apache.kafka.common.serialization.StringDeserializer");
+		System.setProperty("kafka_key.serializer","org.apache.kafka.common.serialization.StringSerializer");
+		System.setProperty("kafka_value.serializer",  "org.apache.kafka.common.serialization.StringSerializer");
+//		System.setProperty("kafka_schema.registry.url", "true");
 	}
 	
 	private static TaskClient tc;
@@ -71,7 +83,7 @@ public class End2EndTests {
 	public static void setup() throws Exception {
 
 		ConductorServer server = new ConductorServer(new ConductorConfig());
-		server.start(8080, false);
+		server.start(8080, true);
 		
 		tc = new TaskClient();
 		tc.setRootURI("http://localhost:8080/api/");

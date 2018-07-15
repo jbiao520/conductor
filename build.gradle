@@ -1,9 +1,13 @@
 buildscript {
 	
 	repositories {
-        jcenter()
+//        mavenCentral()
+//        jcenter()
+        maven {
+            url 'https://mvnrepository.com/artifact'
+        }
     }
-    
+
     dependencies {
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
         classpath 'org.apache.ant:ant:1.9.7'
@@ -15,7 +19,7 @@ plugins {
 
 // Establish version and status
 ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
-
+apply plugin: 'maven'
 apply plugin: 'project-report'
 apply from: "$rootDir/versionsOfDependencies.gradle"
 
