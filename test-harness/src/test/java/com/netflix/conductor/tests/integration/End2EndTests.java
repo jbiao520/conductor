@@ -64,7 +64,6 @@ public class End2EndTests {
 		System.setProperty("io.nats.client.url", "nats://t1.devvm.com:4222");
 		System.setProperty("conductor.additional.modules", "com.netflix.conductor.contribs.NatsModule,com.netflix.conductor.contribs.KafkaModule");
 		System.setProperty("loadSample", "true");
-//		System.setProperty("conductor.additional.modules", "com.netflix.conductor.contribs.KafkaModule");
 
 		System.setProperty("kafka_bootstrap.servers", "t1.devvm.com:19092");
 		System.setProperty("kafka_group.id", "george_test");
