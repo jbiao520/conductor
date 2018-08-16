@@ -23,7 +23,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.netflix.conductor.core.events.queue.Message;
 import com.netflix.conductor.core.events.queue.ObservableQueue;
 import com.netflix.conductor.metrics.Monitors;
-import org.apache.avro.data.Json;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -95,7 +94,7 @@ public class KAFKAObservableQueue implements ObservableQueue {
 			List<Message> messages = recordList.stream()
 					.map(msg -> new Message(msgToObjec(msg.value()).getId(),msgToObjec(msg.value()).getPayload(),msgToObjec(msg.value()).getReceipt()))
 					.collect(Collectors.toList());
-			return null;
+			return messages;
 		} catch (Exception e) {
 			logger.error("Exception while getting messages from KAFKA ", e);
 			Monitors.recordObservableQMessageReceivedErrors(QUEUE_TYPE);
@@ -115,7 +114,7 @@ public class KAFKAObservableQueue implements ObservableQueue {
 		messages.forEach(message -> {
 			try {
 				String payload = message.getPayload();
-				ProducerRecord<String,String> record = new ProducerRecord<String, String>(queueURI,JSONObject.toJSONString(message));
+				ProducerRecord<String,String> record = new ProducerRecord<>(queueURI,JSONObject.toJSONString(message));
 				producer.send(record);
 				logger.info(String.format("Published message to %s: %s", queueURI, payload));
 			} catch (Exception ex) {
