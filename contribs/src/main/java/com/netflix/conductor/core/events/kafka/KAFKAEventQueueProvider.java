@@ -19,11 +19,9 @@
 package com.netflix.conductor.core.events.kafka;
 
 import com.netflix.conductor.contribs.queue.kafka.KAFKAObservableQueue;
-import com.netflix.conductor.contribs.queue.nats.NATSObservableQueue;
 import com.netflix.conductor.core.config.Configuration;
 import com.netflix.conductor.core.events.EventQueueProvider;
 import com.netflix.conductor.core.events.queue.ObservableQueue;
-import io.nats.client.ConnectionFactory;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.slf4j.Logger;
